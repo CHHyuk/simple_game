@@ -26,13 +26,15 @@ class Object:
         self.img = pygame.transform.scale(self.img, (x,y))
         self.size_x, self.size_y = self.img.get_size()
         
-    def locate(self,size,nx,ny):
-        self.x = nx - round(self.size_x / 2)
-        self.y = ny - round(self.size_y / 2) 
+    def locate(self,x,y):
+        self.x = x - round(self.size_x / 2)
+        self.y = y - round(self.size_y / 2) 
 
 spaceship = Object()
-spaceship.add_img("C:/Users/Administrator/Desktop/12-19/simple_game/spaceship.png",50,50)
-spaceship.locate(size,200,800)
+spaceship.add_img("C:/Users/Administrator/Desktop/12-21/simple_game/spaceship.png",50,50)
+spaceship.locate(200,800)
+
+
 """
 불러올 이미지(오브젝트)가 많기 때문에 클래스화 하여 사용
 #spaceship = pygame.image.load("C:/Users/Administrator/Desktop/12-19/simple_game/spaceship.png").convert_alpha() # 이미지 경로 입력, \를 /로 바꿔줘야 함, png 파일 사용 시 convert_alpha() 붙여줘야 함
