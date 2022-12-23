@@ -1,4 +1,5 @@
 import pygame
+import random
 
 # 1. 초기화
 pygame.init() # 파이게임 내의 init 함수 실행 > 초기화
@@ -29,9 +30,13 @@ class Object:
     
     def show(self):
         screen.blit(self.img, (self.x, self.y))
+        
+    def crash(a, b):
+        if b.x > a.x - b.size_x and b.x < a.x + b.size_x:
+            if b.y > a.y - b.size_y and b.y < a.y + b.size_y:
 
 spaceship = Object()
-spaceship.add_img("C:/Users/Administrator/Desktop/12-21/simple_game/spaceship.png",50,50)
+spaceship.add_img("C:/Users/Administrator/Desktop/12-23/simple_game/spaceship.png",50,50)
 spaceship.x = round(size[0] / 2) - round(spaceship.size_x / 2)
 spaceship.y = size[1] - spaceship.size_y - 30
 spaceship.move = 5 # 속도
@@ -49,8 +54,9 @@ space_move = False
 #spaceship_y = size[1] - spaceship_size_y - 30
 """
 
-color = (0, 0, 0) # RGB 검정색
-
+color = (21, 0, 50) # RGB
+missile_list = []
+enemy_list = []
 k = 0
 
 # 4. 메인 이벤트
@@ -101,14 +107,14 @@ while system_exit == 0:
     spaceship.y += to_y
     
     
-    missile_list = []
     if space_move == True:
         missile = Object()
-        missile.add_img('C:/Users/Administrator/Desktop/12-21/simple_game/missile.png',10,20)
+        missile.add_img('C:/Users/Administrator/Desktop/12-23/simple_game/missile.png',10,20)
         missile.move = 10
         missile.x = spaceship.x + round(spaceship.size_x / 2) - round(missile.size_x / 2)
         missile.y = spaceship.y
         missile_list.append(missile)
+        space_move = False
     
     delete_list = []
     for i in range(len(missile_list)):
@@ -116,16 +122,41 @@ while system_exit == 0:
         m.y -= m.move
         if m.y <= -m.size_y:
             delete_list.append(m)
+    try:
+        delete_list.reverse()
+        for d in delete_list:
+            del missile_list[d]
+    except:
+        pass
     
-    delete_list.reverse()
-    for d in delete_list:
-        del missile_list[i]
-            
+    delete_list2 = []
+    for i in range(len(enemy_list)):
+        e = enemy_list[i]
+        e.y += e.move
+        if e.y <= size[1]:
+            delete_list2.append(e)
+    try:
+        delete_list2.reverse()
+        for d in delete_list2:
+            del enemy_list[d]
+    except:
+        pass
+    
+    if random.random() > 0.97:
+        enemy = Object()
+        enemy.add_img('C:/Users/Administrator/Desktop/12-23/simple_game/enemy.png',40,40)
+        enemy.move = 2
+        enemy.x = random.randrange(0 + spaceship.size_x, size[0]-enemy.size_x - spaceship.size_x)
+        enemy.y = 15
+        enemy_list.append(enemy)
+    
     # 4-4. 전사작업(그리기)
     screen.fill(color) # 배경 color로 채우기
     spaceship.show() # 지정한 x,y자리에 배치
     for m in missile_list:
         m.show()
+    for e in enemy_list:
+        e.show()
         
         
     # 4-5. 업데이트
