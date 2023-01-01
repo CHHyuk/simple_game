@@ -1,5 +1,7 @@
 import pygame
 import random
+import time
+from datetime import datetime
 
 # 1. 초기화
 pygame.init() # 파이게임 내의 init 함수 실행 > 초기화
@@ -31,15 +33,24 @@ class Object:
     def show(self):
         screen.blit(self.img, (self.x, self.y))
         
-    def crash(a, b):
-        if b.x > a.x - b.size_x and b.x < a.x + b.size_x:
-            if b.y > a.y - b.size_y and b.y < a.y + b.size_y:
+def crash(a, b):
+    if (a.x - b.size_x <= b.x) and (b.x <= a.x + a.size_x):
+        if (a.y - b.size_y <= b.y) and (b.y <= a.y + a.size_y):
+            return True
+        else:
+            return False
+    else:
+        return False
 
 spaceship = Object()
-spaceship.add_img("C:/Users/Administrator/Desktop/12-23/simple_game/spaceship.png",50,50)
+spaceship.add_img("C:/git/simple_game/spaceship.png",50,50)
 spaceship.x = round(size[0] / 2) - round(spaceship.size_x / 2)
 spaceship.y = size[1] - spaceship.size_y - 30
 spaceship.move = 5 # 속도
+
+left_move = False
+right_move = False
+space_move = False
 
 to_x = 0
 to_y = 0
@@ -54,14 +65,45 @@ space_move = False
 #spaceship_y = size[1] - spaceship_size_y - 30
 """
 
-color = (21, 0, 50) # RGB
+white = (255, 255, 255)
+color = (21, 0, 50) # 배경색
+yellow = (255, 255, 0)
+red = (255, 0, 0) # RGB
+
 missile_list = []
 enemy_list = []
 k = 0
 
+game_over = 0
+
+score = 0 # 미사일로 적 제거 시 score 1 증가
+miss = 0 # 적이 화면 밖으로 나갈 시 miss 1 증가
+
+# 시작 전 대기
+system_exit = 0
+while system_exit == 0:
+    clock.tick(60)
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT: # x 버튼 클릭
+            pygame.quit()
+            
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                system_exit = 1
+    screen.fill(color)
+    font  = pygame.font.Font("C:/git/simple_game/D2Coding-Ver1.3.2-20180524/D2Coding/D2Coding-Ver1.3.2-20180524.ttc", 40)
+    text = font.render("press space!", True, white)
+    screen.blit(text, (90, size[1]/2 - 50))
+    pygame.display.flip()
+
+
 # 4. 메인 이벤트
+start_time = datetime.now()
 system_exit = 0 # 탈줄구 마련
 while system_exit == 0:
+    print('score : {}'.format(score))
+    print('miss : {}'.format(miss))
+
     # 4-1. FPS 설정
     clock.tick(60) # FPS 60으로 설정, 1초에 60번 while문 반복하겠다.
     
@@ -103,25 +145,39 @@ while system_exit == 0:
         spaceship.y = size[1] - spaceship.size_y
         
     # 4-3. 입력, 시간에 따른 변화
+    current_time = datetime.now()
+    delta_time = round((current_time - start_time).total_seconds())
+
+    if left_move == True:
+        spaceship.x -= spaceship.move
+        if spaceship.x <= 0:
+            spaceship.x = 0
+    elif right_move == True:
+        spaceship.x += spaceship.move
+        if spaceship.x >= size[0] - spaceship.size_x:
+            spaceship.x = size[0] - spaceship.size_x    
+    
     spaceship.x += to_x
     spaceship.y += to_y
     
     
     if space_move == True:
         missile = Object()
-        missile.add_img('C:/Users/Administrator/Desktop/12-23/simple_game/missile.png',10,20)
+        missile.add_img('C:/git/simple_game/missile.png',10,20)
         missile.move = 10
         missile.x = spaceship.x + round(spaceship.size_x / 2) - round(missile.size_x / 2)
         missile.y = spaceship.y
         missile_list.append(missile)
         space_move = False
     
+    k += 1
+
     delete_list = []
     for i in range(len(missile_list)):
         m = missile_list[i]
         m.y -= m.move
         if m.y <= -m.size_y:
-            delete_list.append(m)
+            delete_list.append(i)
     try:
         delete_list.reverse()
         for d in delete_list:
@@ -133,18 +189,51 @@ while system_exit == 0:
     for i in range(len(enemy_list)):
         e = enemy_list[i]
         e.y += e.move
-        if e.y <= size[1]:
-            delete_list2.append(e)
+        if e.y >= size[1]:
+            delete_list2.append(i)
     try:
         delete_list2.reverse()
         for d in delete_list2:
             del enemy_list[d]
+            miss += 1
     except:
         pass
     
+    delete_missile_list = []
+    delete_enemy_list = []
+
+    for i in range(len(missile_list)):
+        for j in range(len(enemy_list)):
+            m = missile_list[i]
+            e = enemy_list[j]
+            if crash(m,e) == True:
+                delete_missile_list.append(i)
+                delete_enemy_list.append(j)
+
+    delete_missile_list = list(set(delete_missile_list))
+    delete_enemy_list = list(set(delete_enemy_list))
+
+    try:
+        delete_missile_list.reverse()
+        delete_enemy_list.reverse()
+        for dm in delete_missile_list:
+            del missile_list[dm]
+        for de in delete_enemy_list:
+            del enemy_list[de]
+            score += 1
+    except:
+        pass
+
+    for i in range(len(enemy_list)):
+        e = enemy_list[i]
+        if crash(e,spaceship) == True:
+            system_exit = 1
+            game_over = 1
+            time.sleep(1)
+    
     if random.random() > 0.97:
         enemy = Object()
-        enemy.add_img('C:/Users/Administrator/Desktop/12-23/simple_game/enemy.png',40,40)
+        enemy.add_img('C:/git/simple_game/enemy.png',40,40)
         enemy.move = 2
         enemy.x = random.randrange(0 + spaceship.size_x, size[0]-enemy.size_x - spaceship.size_x)
         enemy.y = 15
@@ -157,6 +246,13 @@ while system_exit == 0:
         m.show()
     for e in enemy_list:
         e.show()
+
+    font = pygame.font.Font("C:/git/simple_game/D2Coding-Ver1.3.2-20180524/D2Coding/D2Coding-Ver1.3.2-20180524.ttc", 20)
+    text_score = font.render('score : {}, miss : {}'.format(score,miss), True, yellow)
+    screen.blit(text_score, (10,10))
+
+    text_time = font.render('time : {}'.format(delta_time), True, white)
+    screen.blit(text_time,(size[0] - 100, 10))
         
         
     # 4-5. 업데이트
@@ -164,4 +260,15 @@ while system_exit == 0:
     
     
 # 5. 종료
-pygame.quit() # 종료 함수
+    while game_over == 1:
+        clock.tick(60)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                game_over = 0
+        screen.fill((61, 61, 61))
+        font  = pygame.font.Font("C:/git/simple_game/D2Coding-Ver1.3.2-20180524/D2Coding/D2Coding-Ver1.3.2-20180524.ttc", 50)
+        text = font.render("GAME OVER", True, red)
+        screen.blit(text, (90, size[1]/2 - 50))
+        pygame.display.flip()
+
+pygame.quit()
