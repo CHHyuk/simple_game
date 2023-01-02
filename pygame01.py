@@ -7,7 +7,7 @@ from datetime import datetime
 pygame.init() # 파이게임 내의 init 함수 실행 > 초기화
 
 # 2. 게임 화면 설정
-size = [400, 900]
+size = [400, 900] # 가로, 세로 (좌측 상단이 0, 0)
 screen = pygame.display.set_mode(size) # 400 x 900 해상도의 창을 만듬
 
 title = 'Pygame Ex'
@@ -16,7 +16,7 @@ pygame.display.set_caption(title) # 제목 설정
 # 3. 게임 내부에서의 설정
 clock = pygame.time.Clock() # 시계
 
-class Object:
+class Object: # 이미지 클래스
     def __init__(self):
         self.x = 0
         self.y = 0
@@ -34,8 +34,8 @@ class Object:
         screen.blit(self.img, (self.x, self.y))
         
 def crash(a, b):
-    if (a.x - b.size_x <= b.x) and (b.x <= a.x + a.size_x):
-        if (a.y - b.size_y <= b.y) and (b.y <= a.y + a.size_y):
+    if (a.x - b.size_x <= b.x) and (b.x <= a.x + a.size_x): # 충돌 범위 설정
+        if (a.y - b.size_y <= b.y) and (b.y <= a.y + a.size_y): # 충돌 범위 설정
             return True
         else:
             return False
@@ -43,7 +43,7 @@ def crash(a, b):
         return False
 
 spaceship = Object()
-spaceship.add_img("C:/git/simple_game/spaceship.png",50,50)
+spaceship.add_img("C:/Users/Administrator/Desktop/01-02/simple_game/spaceship.png",50,50)
 spaceship.x = round(size[0] / 2) - round(spaceship.size_x / 2)
 spaceship.y = size[1] - spaceship.size_y - 30
 spaceship.move = 5 # 속도
@@ -54,8 +54,6 @@ space_move = False
 
 to_x = 0
 to_y = 0
-
-space_move = False
 """
 불러올 이미지(오브젝트)가 많기 때문에 클래스화 하여 사용
 #spaceship = pygame.image.load("C:/Users/Administrator/Desktop/12-19/simple_game/spaceship.png").convert_alpha() # 이미지 경로 입력, \를 /로 바꿔줘야 함, png 파일 사용 시 convert_alpha() 붙여줘야 함
@@ -91,7 +89,7 @@ while system_exit == 0:
             if event.key == pygame.K_SPACE:
                 system_exit = 1
     screen.fill(color)
-    font  = pygame.font.Font("C:/git/simple_game/D2Coding-Ver1.3.2-20180524/D2Coding/D2Coding-Ver1.3.2-20180524.ttc", 40)
+    font  = pygame.font.Font("C:/Users/Administrator/Desktop/01-02/simple_game/D2Coding-Ver1.3.2-20180524/D2Coding/D2Coding-Ver1.3.2-20180524.ttc", 40)
     text = font.render("press space!", True, white)
     screen.blit(text, (90, size[1]/2 - 50))
     pygame.display.flip()
@@ -101,8 +99,8 @@ while system_exit == 0:
 start_time = datetime.now()
 system_exit = 0 # 탈줄구 마련
 while system_exit == 0:
-    print('score : {}'.format(score))
-    print('miss : {}'.format(miss))
+#    print('score : {}'.format(score))
+#    print('miss : {}'.format(miss))
 
     # 4-1. FPS 설정
     clock.tick(60) # FPS 60으로 설정, 1초에 60번 while문 반복하겠다.
@@ -148,14 +146,6 @@ while system_exit == 0:
     current_time = datetime.now()
     delta_time = round((current_time - start_time).total_seconds())
 
-    if left_move == True:
-        spaceship.x -= spaceship.move
-        if spaceship.x <= 0:
-            spaceship.x = 0
-    elif right_move == True:
-        spaceship.x += spaceship.move
-        if spaceship.x >= size[0] - spaceship.size_x:
-            spaceship.x = size[0] - spaceship.size_x    
     
     spaceship.x += to_x
     spaceship.y += to_y
@@ -163,7 +153,7 @@ while system_exit == 0:
     
     if space_move == True:
         missile = Object()
-        missile.add_img('C:/git/simple_game/missile.png',10,20)
+        missile.add_img('C:/Users/Administrator/Desktop/01-02/simple_game/missile.png',10,20)
         missile.move = 10
         missile.x = spaceship.x + round(spaceship.size_x / 2) - round(missile.size_x / 2)
         missile.y = spaceship.y
@@ -233,7 +223,7 @@ while system_exit == 0:
     
     if random.random() > 0.97:
         enemy = Object()
-        enemy.add_img('C:/git/simple_game/enemy.png',40,40)
+        enemy.add_img('C:/Users/Administrator/Desktop/01-02/simple_game/enemy.png',40,40)
         enemy.move = 2
         enemy.x = random.randrange(0 + spaceship.size_x, size[0]-enemy.size_x - spaceship.size_x)
         enemy.y = 15
@@ -247,8 +237,8 @@ while system_exit == 0:
     for e in enemy_list:
         e.show()
 
-    font = pygame.font.Font("C:/git/simple_game/D2Coding-Ver1.3.2-20180524/D2Coding/D2Coding-Ver1.3.2-20180524.ttc", 20)
-    text_score = font.render('score : {}, miss : {}'.format(score,miss), True, yellow)
+    font = pygame.font.Font("C:/Users/Administrator/Desktop/01-02/simple_game/D2Coding-Ver1.3.2-20180524/D2Coding/D2Coding-Ver1.3.2-20180524.ttc", 20)
+    text_score = font.render('score : {}  miss : {}'.format(score,miss), True, yellow)
     screen.blit(text_score, (10,10))
 
     text_time = font.render('time : {}'.format(delta_time), True, white)
@@ -266,7 +256,7 @@ while system_exit == 0:
             if event.type == pygame.QUIT:
                 game_over = 0
         screen.fill((61, 61, 61))
-        font  = pygame.font.Font("C:/git/simple_game/D2Coding-Ver1.3.2-20180524/D2Coding/D2Coding-Ver1.3.2-20180524.ttc", 50)
+        font  = pygame.font.Font("C:/Users/Administrator/Desktop/01-02/simple_game/D2Coding-Ver1.3.2-20180524/D2Coding/D2Coding-Ver1.3.2-20180524.ttc", 50)
         text = font.render("GAME OVER", True, red)
         screen.blit(text, (90, size[1]/2 - 50))
         pygame.display.flip()
