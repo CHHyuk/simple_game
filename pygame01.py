@@ -43,7 +43,7 @@ def crash(a, b):
         return False
 
 spaceship = Object()
-spaceship.add_img("C:/Users/Administrator/Desktop/01-02/simple_game/spaceship.png",50,50)
+spaceship.add_img("C:/git/simple_game/spaceship.png",50,50)
 spaceship.x = round(size[0] / 2) - round(spaceship.size_x / 2)
 spaceship.y = size[1] - spaceship.size_y - 30
 spaceship.move = 5 # 속도
@@ -89,7 +89,7 @@ while system_exit == 0:
             if event.key == pygame.K_SPACE:
                 system_exit = 1
     screen.fill(color)
-    font  = pygame.font.Font("C:/Users/Administrator/Desktop/01-02/simple_game/D2Coding-Ver1.3.2-20180524/D2Coding/D2Coding-Ver1.3.2-20180524.ttc", 40)
+    font  = pygame.font.Font("C:/git/simple_game/D2Coding-Ver1.3.2-20180524/D2Coding/D2Coding-Ver1.3.2-20180524.ttc", 40)
     text = font.render("press space!", True, white)
     screen.blit(text, (90, size[1]/2 - 50))
     pygame.display.flip()
@@ -153,7 +153,7 @@ while system_exit == 0:
     
     if space_move == True:
         missile = Object()
-        missile.add_img('C:/Users/Administrator/Desktop/01-02/simple_game/missile.png',10,20)
+        missile.add_img('C:/git/simple_game/missile.png',10,20)
         missile.move = 10
         missile.x = spaceship.x + round(spaceship.size_x / 2) - round(missile.size_x / 2)
         missile.y = spaceship.y
@@ -223,7 +223,7 @@ while system_exit == 0:
     
     if random.random() > 0.97:
         enemy = Object()
-        enemy.add_img('C:/Users/Administrator/Desktop/01-02/simple_game/enemy.png',40,40)
+        enemy.add_img('C:/git/simple_game/enemy.png',40,40)
         enemy.move = 2
         enemy.x = random.randrange(0 + spaceship.size_x, size[0]-enemy.size_x - spaceship.size_x)
         enemy.y = 15
@@ -237,7 +237,7 @@ while system_exit == 0:
     for e in enemy_list:
         e.show()
 
-    font = pygame.font.Font("C:/Users/Administrator/Desktop/01-02/simple_game/D2Coding-Ver1.3.2-20180524/D2Coding/D2Coding-Ver1.3.2-20180524.ttc", 20)
+    font = pygame.font.Font("C:/git/simple_game/D2Coding-Ver1.3.2-20180524/D2Coding/D2Coding-Ver1.3.2-20180524.ttc", 20)
     text_score = font.render('score : {}  miss : {}'.format(score,miss), True, yellow)
     screen.blit(text_score, (10,10))
 
@@ -256,9 +256,17 @@ while system_exit == 0:
             if event.type == pygame.QUIT:
                 game_over = 0
         screen.fill((61, 61, 61))
-        font  = pygame.font.Font("C:/Users/Administrator/Desktop/01-02/simple_game/D2Coding-Ver1.3.2-20180524/D2Coding/D2Coding-Ver1.3.2-20180524.ttc", 50)
+        font  = pygame.font.Font("C:/git/simple_game/D2Coding-Ver1.3.2-20180524/D2Coding/D2Coding-Ver1.3.2-20180524.ttc", 50)
         text = font.render("GAME OVER", True, red)
         screen.blit(text, (90, size[1]/2 - 50))
         pygame.display.flip()
 
 pygame.quit()
+
+
+
+"""
+오브젝트 풀 (최적화 방법)
+처음에 게임 로드할때 하나씩 생성을 해놔 > 복사
+갤러그랑 똑같이 만들기
+"""
