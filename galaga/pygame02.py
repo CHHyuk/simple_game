@@ -60,13 +60,15 @@ ship.move = 5
 laser_list = []
 enemy_list = []
 boss_list = []
+boss_laser_list = []
 
+difficulty = 0.97
 space_move = False
 game_over = 0
-round_score = 98
+round_score = 0
 boss_alert = 0
 boss_check = 0
-boss_life = 100
+boss_life = 300
 round_clear = 0
 
 system_exit = 0
@@ -142,6 +144,7 @@ while flag:
         laser.y = ship.y
         laser_list.append(laser)
         space_move = False
+    
         
     delete_laser = []
     for i in range(len(laser_list)):
@@ -170,18 +173,24 @@ while flag:
             del enemy_list[d]
     except:
         pass
-
-    for i in range(len(boss_list)):
-        b = boss_list[i]
-        b.y += b.move
-        if b.y >= size[1]:
-            flag = False
-            game_over = 1
-            time.sleep(1)
+    
+    delete_boss_laser = []
+    for i in range(len(boss_laser_list)):
+        bl = boss_laser_list[i]
+        bl.y += bl.move
+        if bl.y >= size[1]:
+            delete_boss_laser.append(i)
+    
+    try:
+        delete_boss_laser.reverse()
+        for d in delete_boss_laser:
+            del boss_laser_list[d]
+    except:
+        pass
 
     delete_laser_list = []
     delete_enemy_list = []
-
+    
     for i in range(len(laser_list)):
         for j in range(len(enemy_list)):
             l = laser_list[i]
@@ -197,6 +206,11 @@ while flag:
             if crash(l,b) == True:
                 delete_laser_list.append(i)   
                 boss_life -= 1
+    for i in range(len(boss_laser_list)):
+        bl = boss_laser_list[i]
+        if crash(bl,ship) == True:
+            flag = False
+            game_over = 1         
 
     delete_laser_list = list(set(delete_laser_list))
     delete_enemy_list = list(set(delete_enemy_list))
@@ -217,15 +231,30 @@ while flag:
         if crash(e,ship) == True:
             flag = False
             game_over = 1
-            time.sleep(1)
+    
+    for i in range(len(boss_list)):
+        b = boss_list[i]
+        if crash(b,ship) == True:
+            flag = False
+            game_over = 1
 
-    if random.random() > 0.95 and round_score < 99:
+    if random.random() > difficulty:
         enemy = Object()
         enemy.add_img('C:/git/simple_game/galaga/enemy1.png',40,40)  
         enemy.move = 2
         enemy.x = random.randrange(0 + ship.size_x, size[0]-enemy.size_x - ship.size_x)
         enemy.y = 15
         enemy_list.append(enemy)
+        if round_score >= 100:
+            difficulty = 1
+
+    if random.random() > 0.85 and round_score >= 100:
+        boss_laser = Object()
+        boss_laser.add_img('C:/git/simple_game/galaga/boss_laser.png',5,10)
+        boss_laser.move = 4
+        boss_laser.x = random.randrange(0, size[0])
+        boss_laser.y = 0
+        boss_laser_list.append(boss_laser)
 
     if round_score == 99:
         boss_alert = 1
@@ -235,9 +264,9 @@ while flag:
     if boss_check == 1:
         boss = Object()
         boss.add_img('C:/git/simple_game/galaga/enemy2.png',200,200)
-        boss.move = 0.5
+        boss.move = 0
         boss.x = ((size[0] / 2) - 100)
-        boss.y = 0
+        boss.y = 30
         boss_list.append(boss)
         boss_check = 0
     
@@ -245,14 +274,16 @@ while flag:
         flag = False
         round_clear = 1
 
-    screen.blit(background, (0,0)) # 배경 color로 채우기
-    ship.show() # 지정한 x,y자리에 배치
+    screen.blit(background, (0,0))
+    ship.show()
     for l in laser_list:
         l.show()
     for e in enemy_list:
         e.show()
     for b in boss_list:
         b.show()
+    for bl in boss_laser_list:
+        bl.show()
 
     font = pygame.font.Font('C:/git/simple_game/galaga/D2Coding-Ver1.3.2-20180524/D2Coding/D2Coding-Ver1.3.2-20180524.ttc',20)
     text_score = font.render('round score : {} / 100'.format(round_score),True, white)
@@ -277,7 +308,7 @@ while flag:
         text_boss = font.render('Warning!!', True, white)
         screen.blit(text_boss,(size[0]/2 - 200, size[1]/2 - 50))
         pygame.display.flip()
-        time.sleep(2)
+        time.sleep(1)
         boss_alert = 0
         
     while game_over == 1:
