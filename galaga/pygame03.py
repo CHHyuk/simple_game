@@ -21,7 +21,7 @@ white = (255,255,255)
 to_x = 0
 to_y = 0
 
-class Object(Enum):
+class Object():
     def __init__(self):
         self.x = 0
         self.y = 0
@@ -73,6 +73,59 @@ while system_exit == 0:
     screen.blit(text_press, ((size[0]/2) - 65, size[1]/2 + 200))
     pygame.display.flip()
 
+# 메인 이벤트 시작
 start_time = datetime.now()
+flag = True
+while flag:
+    clock.tick(60)
+    
+    # 키 입력 반응
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            flag = False
 
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_LEFT:
+                to_x -= ship.move
+            elif event.key == pygame.K_RIGHT:
+                to_x += ship.move
+            elif event.key == pygame.K_s:
+                attack = True
+        
+        if event.type == pygame.KEYUP:
+            if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
+                to_x = 0
+            elif event.key == pygame.K_s:
+                attack = False
+    
+    if ship.x < 0:
+        ship.x = 0
+    elif ship.x > size[0] - ship.size_x:
+        ship.x = size[0] - ship.size_x
+    
+    # to_x 만큼 ship 위치 이동
+    ship.x += to_x
+
+    # 시간
+    current_time = datetime.now()
+    delta_time = round((current_time - start_time).total_seconds())
+    
+    # 공격
+    if attack == True:
+        missile = Object()
+        missile.add_img(laser_img,5,10)
+        missile.move = 20
+        missile.x = ship.x + round(ship.size_x / 2) - round(missile.size_x / 2)
+        missile.y = ship.y
+        missile_list.append(missile)
+        attack = False
+    
+    # 공격 리스트 관리
+    delete_missile = []
+    for i in range(len(missile_list)):
+        m = missile_list[i]
+        m.y -= m.move
+        if m.y <= -m.size_y:
+            delete_missile.append(i)
+        
 
