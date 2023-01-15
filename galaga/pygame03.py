@@ -205,7 +205,7 @@ while flag:
         if e.t < 1:
             e.t += 0.015
             e.x = ((1-e.t) ** 2)*e.start_x + 2 * (1-e.t) * e.t * 200 + (e.t ** 2) * e.end_x
-            e.y = ((1-e.t) ** 2)*e.start_y + 2 * (1-e.t) * e.t * 200 + (e.t ** 2) * e.end_y
+            e.y = ((1-e.t) ** 2)*e.start_y + 2 * (1-e.t) * e.t * 400 + (e.t ** 2) * e.end_y
         
     for i in enemy_list:
         if i.t >= 1:
@@ -215,7 +215,7 @@ while flag:
             game_over = 1
     
     for i in enemy_list:
-        if random.random() > 0.995 and i.t >= 1:
+        if random.random() > 0.992 and i.t >= 1:
             enemy_missile = Object()
             enemy_missile.add_img(enemy_laser_img,2,10)
             enemy_missile.move = 5
