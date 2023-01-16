@@ -11,13 +11,13 @@ title = '갤러그'
 pygame.display.set_caption(title)
 
 clock = pygame.time.Clock()
-ship_img = pygame.image.load('C:/git/simple_game/shooting/ship.png').convert_alpha()
-background = pygame.image.load('C:/git/simple_game/shooting/map.png').convert_alpha()
+ship_img = pygame.image.load('img/ship.png').convert_alpha()
+background = pygame.image.load('img/map.png').convert_alpha()
 background = pygame.transform.scale(background, (400,900))
-laser_img = pygame.image.load('C:/git/simple_game/shooting/laser.png').convert_alpha()
-enemy1_img = pygame.image.load('C:/git/simple_game/shooting/enemy1.png').convert_alpha()
-enemy2_img = pygame.image.load('C:/git/simple_game/shooting/enemy2.png').convert_alpha()
-enemy_laser_img = pygame.image.load('C:/git/simple_game/shooting/boss_laser.png').convert_alpha()
+laser_img = pygame.image.load('img/laser.png').convert_alpha()
+enemy1_img = pygame.image.load('img/enemy1.png').convert_alpha()
+enemy2_img = pygame.image.load('img/enemy2.png').convert_alpha()
+enemy_laser_img = pygame.image.load('img/enemy_laser.png').convert_alpha()
 black = (0,0,0)
 white = (255,255,255)
 to_x = 0
@@ -47,7 +47,7 @@ class Enemy(Object):
         self.end_x = 0
         self.end_y = 0
         self.t = 0
-        self.move = 0.2
+        self.move = 0.3 + (round_check * 0.1)
 
 def crash(a, b):
     if (a.x - b.size_x <= b.x) and (b.x <= a.x + a.size_x): 
@@ -76,6 +76,7 @@ game_clear = 0
 score = 0
 check = 1
 system_exit = 0
+round_check = 1
 k = 0
 
 while system_exit == 0:
@@ -89,9 +90,9 @@ while system_exit == 0:
                 system_exit = 1
     
     screen.fill(black)
-    font_press = pygame.font.Font('C:/git/simple_game/galaga/D2Coding-Ver1.3.2-20180524/D2Coding/D2Coding-Ver1.3.2-20180524.ttc',20)
+    font_press = pygame.font.Font('font/D2Coding-Ver1.3.2-20180524.ttc',20)
     text_press = font_press.render('Press s button', True, (255,0,0))
-    font_title = pygame.font.Font('C:/git/simple_game/galaga/D2Coding-Ver1.3.2-20180524/D2Coding/D2Coding-Ver1.3.2-20180524.ttc',40)
+    font_title = pygame.font.Font('font/D2Coding-Ver1.3.2-20180524.ttc',40)
     text_title = font_title.render('좌우키 : 이동', True, white)
     text_title2 = font_title.render('S키 : 공격',True, white)
     screen.blit(text_title, ((size[0]/2) - 125, size[1]/2 - 200))
@@ -199,11 +200,19 @@ while flag:
                 enemy.end_y = 250
                 enemy_list.append(enemy)
         check = 0
+    
+    if len(enemy_list) == 0:
+        check = 1
+        round_check += 1
+
+    if round_check == 11 and enemy_list == []:
+        game_clear = 1
+        flag = False
 
     for i in range(len(enemy_list)):
         e = enemy_list[i]
         if e.t < 1:
-            e.t += 0.015
+            e.t += 0.03
             e.x = ((1-e.t) ** 2)*e.start_x + 2 * (1-e.t) * e.t * 200 + (e.t ** 2) * e.end_x
             e.y = ((1-e.t) ** 2)*e.start_y + 2 * (1-e.t) * e.t * 400 + (e.t ** 2) * e.end_y
         
@@ -215,7 +224,7 @@ while flag:
             game_over = 1
     
     for i in enemy_list:
-        if random.random() > 0.992 and i.t >= 1:
+        if random.random() > 0.997 - (0.001 * round_check)  and i.t >= 1:
             enemy_missile = Object()
             enemy_missile.add_img(enemy_laser_img,2,10)
             enemy_missile.move = 5
@@ -275,10 +284,7 @@ while flag:
     
     except:
         pass
-
-    if enemy_list == []:
-        game_clear = 1
-        flag = False
+        
         
     # 출력
     screen.blit(background, (0,0))
@@ -290,10 +296,11 @@ while flag:
     for em in enemy_missile_list:
         em.show()
     
-    font = pygame.font.Font('C:/git/simple_game/shooting/D2Coding-Ver1.3.2-20180524/D2Coding/D2Coding-Ver1.3.2-20180524.ttc',20)
+    font = pygame.font.Font('font/D2Coding-Ver1.3.2-20180524.ttc',20)
     text_score = font.render('score : {}'.format(score),True, white)
+    text_round = font.render('round : {}'.format(round_check),True, white)
     screen.blit(text_score, (10,10))
-
+    screen.blit(text_round, (260,10))
     pygame.display.flip()
 
 
@@ -303,9 +310,11 @@ while flag:
             if event.type == pygame.QUIT:
                 game_over = 0
         screen.fill(black)
-        font = pygame.font.Font('C:/git/simple_game/shooting/D2Coding-Ver1.3.2-20180524/D2Coding/D2Coding-Ver1.3.2-20180524.ttc',40)
+        font = pygame.font.Font('font/D2Coding-Ver1.3.2-20180524.ttc',40)
         text_over = font.render('GAME OVER',True,white)
+        text_over_score = font.render('점수 : {}'.format(score),True, white)
         screen.blit(text_over,(size[0]/2 - 90, size[1]/2 - 20))
+        screen.blit(text_over_score,(size[0]/2 - 100, size[1]/2 + 40))
         pygame.display.flip()
 
     while game_clear == 1:
@@ -314,7 +323,7 @@ while flag:
             if event.type == pygame.QUIT:
                 game_clear = 0
         screen.fill(black)
-        font = pygame.font.Font('C:/git/simple_game/shooting/D2Coding-Ver1.3.2-20180524/D2Coding/D2Coding-Ver1.3.2-20180524.ttc',40)
+        font = pygame.font.Font('font/D2Coding-Ver1.3.2-20180524.ttc',40)
         text_over = font.render('CLEAR',True,white)
         text_end_score = font.render('점수 : {}'.format(score),True, white)
         screen.blit(text_over,(size[0]/2 - 50, size[1]/2 - 40))

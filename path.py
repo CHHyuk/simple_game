@@ -1,2 +1,2 @@
 import sys
-sys.executable
+print(sys.version)
