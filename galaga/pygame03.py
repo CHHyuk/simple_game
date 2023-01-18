@@ -18,6 +18,7 @@ laser_img = pygame.image.load('img/laser.png').convert_alpha()
 enemy1_img = pygame.image.load('img/enemy1.png').convert_alpha()
 enemy2_img = pygame.image.load('img/enemy2.png').convert_alpha()
 enemy_laser_img = pygame.image.load('img/enemy_laser.png').convert_alpha()
+background_bgm = pygame
 black = (0,0,0)
 white = (255,255,255)
 to_x = 0
