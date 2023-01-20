@@ -88,7 +88,7 @@ score = 0
 check = 0
 system_exit = 0
 round_check = 0
-k = 0
+k = 10
 life = 3
 
 while system_exit == 0:
@@ -107,9 +107,11 @@ while system_exit == 0:
     font_title = pygame.font.Font('font/D2Coding-Ver1.3.2-20180524.ttc',40)
     text_title = font_title.render('좌우키 : 이동', True, white)
     text_title2 = font_title.render('S키 : 공격',True, white)
+    text_made = font_press.render('made by CHHyuk',True,white)
     screen.blit(text_title, ((size[0]/2) - 125, size[1]/2 - 200))
     screen.blit(text_title2, ((size[0]/2) - 100, size[1]/2 - 150))
     screen.blit(text_press, ((size[0]/2) - 65, size[1]/2 + 200))
+    screen.blit(text_made, (240, size[1]-60))
     pygame.display.flip()
 
 t = 0
@@ -247,12 +249,18 @@ while flag:
         if e.t < 1:
             if i < 8:
                 e.t += 0.025
+                if e.t > 1:
+                    e.t = 1
                 e.x = (((1 - e.t)**3) * e.start_x) + (3 * e.t * (1 - e.t)**2 * 200) + (3 * (e.t**2) * (1 - e.t) * 0) + ((e.t**3) * e.end_x) 
                 e.y = (((1 - e.t)**3) * e.start_y) + (3 * e.t * (1 - e.t)**2 * 200) + (3 * (e.t**2) * (1 - e.t) * 0) + ((e.t**3) * e.end_y)
             else:
                 e.t += 0.025
+                if e.t > 1:
+                    e.t = 1
                 e.x = (((1 - e.t)**3) * e.start_x) + (3 * e.t * (1 - e.t)**2 * 200) + (3 * (e.t**2) * (1 - e.t) * 400) + ((e.t**3) * e.end_x) 
                 e.y = (((1 - e.t)**3) * e.start_y) + (3 * e.t * (1 - e.t)**2 * 200) + (3 * (e.t**2) * (1 - e.t) * 0) + ((e.t**3) * e.end_y) 
+
+
 
     for i in enemy_list:
         if i.t >= 1:
@@ -278,7 +286,7 @@ while flag:
     for i in range(len(enemy_missile_list)):
         em = enemy_missile_list[i]
         if em.t < 1:
-            em.t += 0.0004
+            em.t += 0.0005
             em.x = (1-em.t)*em.x + em.t * em.end_x
             em.y = (1-em.t)*em.y + em.t * em.end_y 
         if em.y >= size[1] * 2:
