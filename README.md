@@ -1,3 +1,5 @@
+## 블로그 주소 : https://velog.io/@c_h_hyuk/pygame%EC%9C%BC%EB%A1%9C-%EA%B0%A4%EB%9F%AC%EA%B7%B8-%EB%A7%8C%EB%93%A4%EA%B8%B0
+
 ## 파이썬의 pygame 라이브러리를 활용하여 갤러그 게임 만들기
  - pygame이라는 재밌는 라이브러리가 있어 활용해 보게됨
  - galaga 폴더 내의 pygame03.py가 게임의 소스코드 원본
